@@ -1,15 +1,9 @@
 #include "console.h"
 #include <stdint.h>
 #include <stdio.h>
-#include <_ansi.h>
-#include <_syslist.h>
 #include <errno.h>
-#include <sys/time.h>
-#include <sys/times.h>
-#include <limits.h>
-#include <signal.h>
 #include <stdint.h>
-#include <stdio.h>
+#include <ctype.h>
 
 #define STDIN_FILENO  0
 #define STDOUT_FILENO 1
@@ -36,19 +30,22 @@ void console_init(console_callback_t callback,
 
 void console_handle_char(char c)
 {
-    buffer[idx++] = c;
     if (idx >= CONSOLE_BUFF_LEN)
     {
         idx = 0;
         return;
     }
-    if (c == '\n' || c == '\r')
+    if(isprint(c))
+    {
+    	buffer[idx++] =c;
+    }
+    else if (c == '\n' || c == '\r')
     {
         buffer[idx] = 0;
         console_callback((char *)buffer);
         idx = 0;
     }
-    if(c == '\b' && idx > 0)
+    else if(c == '\b' && idx > 0)
     {
     	idx--;
     }
